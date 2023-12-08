@@ -1,4 +1,8 @@
-import { GuestDropdownMenu, UserDropdownMenu } from "@/components/appBar";
+import {
+  GuestDropdownMenu,
+  ThemeToggle,
+  UserDropdownMenu,
+} from "@/components/appBar";
 
 import { Coffee } from "lucide-react";
 import Link from "next/link";
@@ -28,7 +32,10 @@ const AppBar = ({ user }: { user: any }) => {
       <div className="mx-auto md:px-8">
         <nav className="flex items-center justify-between p-4 sm:px-6 lg:px-8 xl:px-0">
           <Logo />
-          {user ? <UserDropdownMenu /> : <GuestDropdownMenu />}
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {user ? <UserDropdownMenu /> : <GuestDropdownMenu />}
+          </div>
         </nav>
       </div>
     </header>
