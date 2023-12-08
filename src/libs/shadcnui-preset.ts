@@ -5,5 +5,5 @@ import { shadcnPlugin } from "./shadcnui-plugin";
 export const shadcnPreset = {
   darkMode: ["class"],
   content: [],
-  plugins: [shadcnPlugin],
+  plugins: [shadcnPlugin, require("tailwindcss-animate")],
 } satisfies Config;

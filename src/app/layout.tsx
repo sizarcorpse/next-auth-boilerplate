@@ -1,8 +1,8 @@
 import { getCurrentUser } from "@/actions";
+import { AppBar } from "@/components/appBar";
 import { NavigationBar } from "@/components/navigation";
 import { NextAuthProvider, ThemeProvider, ToasterProvider } from "@/providers/";
 import "@/styles/globals.css";
-
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,12 +20,12 @@ export default async function RootLayout({
   const user = await getCurrentUser();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextAuthProvider>
             <ToasterProvider />
-            <NavigationBar user={user as any} />
+            <AppBar user={user as any} />
             {children}
           </NextAuthProvider>
         </ThemeProvider>

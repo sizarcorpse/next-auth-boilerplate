@@ -23,7 +23,7 @@ export const shadcnPlugin = plugin(
         "--border": "0 0% 89.8%",
         "--input": "0 0% 89.8%",
         "--ring": "0 0% 3.9%",
-        "--radius": "1rem",
+        "--radius": "0.5rem",
       },
       ".dark": {
         "--background": "0 0% 3.9%",
@@ -45,6 +45,7 @@ export const shadcnPlugin = plugin(
         "--border": "0 0% 14.9%",
         "--input": "0 0% 14.9%",
         "--ring": "0 0% 83.1%",
+        "--radius": "0.5rem",
       },
     });
 
@@ -62,9 +63,6 @@ export const shadcnPlugin = plugin(
       container: {
         center: true,
         padding: "2rem",
-        screens: {
-          "2xl": "1400px",
-        },
       },
       extend: {
         colors: {
