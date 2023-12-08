@@ -6,7 +6,7 @@ type Props = {
   children?: React.ReactNode;
 };
 
-export const NextAuthProvider = ({ children }: Props) => {
+const NextAuthProvider = ({ children }: Props) => {
   return (
     <SWRConfig
       value={{
@@ -18,3 +18,5 @@ export const NextAuthProvider = ({ children }: Props) => {
     </SWRConfig>
   );
 };
+
+export default NextAuthProvider;
