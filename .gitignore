@@ -36,3 +36,6 @@ next-env.d.ts
 
 auth.txt
 .env
+
+auth-task.md
+prisma/migrations/
