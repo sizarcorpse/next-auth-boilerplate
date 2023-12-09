@@ -8,6 +8,7 @@ const nextConfig = {
   images: {
     domains: ["avatars.githubusercontent.com", "images.unsplash.com"],
   },
+  transpilePackages: ["lucide-react"],
 };
 
 module.exports = nextConfig;

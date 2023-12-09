@@ -14,8 +14,16 @@ const about = {
   ],
 };
 
+import { getCurrentUser, getUserServerSession } from "@/actions";
+import { authOptions } from "@/libs/auth";
+import { getServerSession } from "next-auth/next";
+
 const Home = async () => {
   const { packages } = about;
+  const user = await getCurrentUser();
+  const session = await getServerSession(authOptions);
+  const userSessionServer = await getUserServerSession();
+
   return (
     <main className="flex items-center justify-center p-6">
       <div className="container max-w-screen-lg mx-auto">
@@ -32,6 +40,23 @@ const Home = async () => {
                 {item}
               </p>
             ))}
+          </div>
+          <div className="max-w-screen-xl">
+            <pre>
+              <code>
+                getCurrentUser:
+                {JSON.stringify(user, null, 2)}
+              </code>
+            </pre>
+            <pre>
+              <code>session:{JSON.stringify(session, null, 2)}</code>
+            </pre>
+            <pre>
+              <code>
+                getUserServerSession:
+                {JSON.stringify(userSessionServer, null, 2)}
+              </code>
+            </pre>
           </div>
         </div>
       </div>
