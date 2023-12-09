@@ -7,8 +7,8 @@ import { signIn } from "next-auth/react";
 const LoginWithGithub = () => {
   return (
     <Button
-      variant="secondary"
-      className="flex items-center justify-center gap-2 w-full"
+      variant="outline"
+      className="flex items-center justify-center gap-2 w-full border bg-transparent text-primary-foreground hover:bg-secondary hover:text-secondary-foreground transition-all duration-300"
       onClick={() =>
         signIn("github", {
           callbackUrl: "/",
@@ -16,7 +16,7 @@ const LoginWithGithub = () => {
       }
     >
       <Github className="w-5 w-h" />
-      <span>Continue with GitHub</span>
+      <span className="">Continue with GitHub</span>
     </Button>
   );
 };
