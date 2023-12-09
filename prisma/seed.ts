@@ -19,9 +19,9 @@ async function main() {
   ];
 
   const roles = [
-    { name: "guest", permissions: ["read:user", "read:profile"] },
+    { name: "GUEST", permissions: ["read:user", "read:profile"] },
     {
-      name: "user",
+      name: "USER",
       permissions: [
         "read:user",
         "write:user",
@@ -31,7 +31,7 @@ async function main() {
         "delete:profile",
       ],
     },
-    { name: "admin", permissions: permissions },
+    { name: "ADMIN", permissions: permissions },
   ];
 
   for (const permissionName of permissions) {
