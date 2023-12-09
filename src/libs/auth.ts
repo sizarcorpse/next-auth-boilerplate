@@ -4,12 +4,26 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GitHubProvider from "next-auth/providers/github";
+import GitHubProvider, { GithubProfile } from "next-auth/providers/github";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
   providers: [
     GitHubProvider({
+      authorization: {
+        params: {
+          scope: "read:user user:email",
+        },
+      },
+      profile(profile: GithubProfile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name,
+          email: profile.email,
+          image: profile.avatar_url,
+          username: profile.login,
+        };
+      },
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
@@ -66,8 +80,10 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.name = token.name;
         session.user.email = token.email;
-        session.user.image = token.picture;
+        session.user.image = token.image;
         session.user.username = token.username;
+        session.user.role = token.role;
+        session.user.permissions = token.permissions;
       }
       return session;
     },
@@ -78,12 +94,18 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
         };
       }
+
       const u = await prisma.user.findUnique({
         where: {
           email: token.email as string,
         },
         include: {
           profile: true,
+          Role: {
+            include: {
+              permissions: true,
+            },
+          },
         },
       });
 
@@ -92,35 +114,62 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
+      const operations = [];
+
       if (!u.username || u.username === null) {
-        await prisma.user.update({
-          where: {
-            id: u.id,
-          },
-          data: {
-            username: u.email?.split("@")[0],
-          },
-        });
+        operations.push(
+          prisma.user.update({
+            where: {
+              id: u.id,
+            },
+            data: {
+              username: u.email?.split("@")[0],
+            },
+          })
+        );
       }
 
       if (!u.profile || u.profile === null) {
-        await prisma.profile.create({
-          data: {
-            user: {
-              connect: {
-                id: u.id,
+        operations.push(
+          prisma.profile.create({
+            data: {
+              user: {
+                connect: {
+                  id: u.id,
+                },
               },
             },
-          },
-        });
+          })
+        );
       }
+
+      if (!u.Role || u.Role === null) {
+        operations.push(
+          prisma.user.update({
+            data: {
+              Role: {
+                connect: {
+                  name: "USER",
+                },
+              },
+            },
+            where: {
+              id: u.id,
+            },
+          })
+        );
+      }
+
+      await prisma.$transaction(operations);
 
       return {
         id: u.id,
         name: u.name,
         email: u.email,
-        picture: u.image,
+        image: u.image,
         username: u.username,
+        role: u.Role?.name,
+        permissions: u.Role?.permissions.map((p) => p.name),
       };
     },
   },
