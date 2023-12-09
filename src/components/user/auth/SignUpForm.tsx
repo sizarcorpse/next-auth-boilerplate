@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as z from "zod";
@@ -13,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { InputWithIcon } from "@/components/ui/input-with-icon";
+import { useState } from "react";
 
 const userSchema = z
   .object({
@@ -53,7 +55,7 @@ const userSchema = z
       .string()
       .min(8)
       .max(50)
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,50}$/, {
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%^*#?&]{8,50}$/, {
         message:
           "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
       }),
@@ -67,6 +69,8 @@ const userSchema = z
 // TODO: Check username availability.
 
 const SignUpForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -77,12 +81,42 @@ const SignUpForm = () => {
   const {
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
   } = form;
 
-  function onSubmit(values: z.infer<typeof userSchema>) {
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof userSchema>) => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify({
+          name: values.name,
+          username: values.username,
+          email: values.email,
+          password: values.password,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        setIsLoading(false);
+        toast.error((await response.json()).message);
+        return;
+      }
+
+      await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        callbackUrl: `/`,
+      });
+    } catch (error: any) {
+      setIsLoading(false);
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div>
@@ -197,7 +231,12 @@ const SignUpForm = () => {
             )}
           />
           <div>
-            <Button type="submit" variant="success" className="h-12 w-full">
+            <Button
+              type="submit"
+              variant="success"
+              className="h-12 w-full"
+              disabled={isLoading || !isValid}
+            >
               Continue
             </Button>
           </div>
