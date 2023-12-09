@@ -3,8 +3,8 @@ import {
   ThemeToggle,
   UserDropdownMenu,
 } from "@/components/appBar";
-
 import { Coffee } from "lucide-react";
+import { Session } from "next-auth";
 import Link from "next/link";
 const Logo = () => {
   return (
@@ -26,18 +26,16 @@ const Logo = () => {
   );
 };
 
-const AppBar = ({ user }: { user: any }) => {
+const AppBar = ({ user }: { user: Session["user"] }) => {
   return (
-    <header className="h-16 sticky top-0 z-30">
-      <div className="mx-auto md:px-8">
-        <nav className="flex items-center justify-between p-4 sm:px-6 lg:px-8 xl:px-0">
-          <Logo />
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            {user ? <UserDropdownMenu /> : <GuestDropdownMenu />}
-          </div>
-        </nav>
-      </div>
+    <header className="h-auto sticky top-0 z-30 backdrop-blur-xl">
+      <nav className="flex items-center justify-between p-2 sm:px-6">
+        <Logo />
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          {user ? <UserDropdownMenu user={user} /> : <GuestDropdownMenu />}
+        </div>
+      </nav>
     </header>
   );
 };

@@ -1,10 +1,9 @@
-import { getCurrentUser } from "@/actions";
+import { getUserServerSession } from "@/actions";
 import { AppBar } from "@/components/appBar";
-import { NavigationBar } from "@/components/navigation";
 import { NextAuthProvider, ThemeProvider, ToasterProvider } from "@/providers/";
 import "@/styles/globals.css";
+import { Session } from "next-auth";
 import { Inter } from "next/font/google";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -17,7 +16,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const { user } = ((await getUserServerSession()) as Session) || null;
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -25,7 +24,7 @@ export default async function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextAuthProvider>
             <ToasterProvider />
-            <AppBar user={user as any} />
+            <AppBar user={user} />
             {children}
           </NextAuthProvider>
         </ThemeProvider>

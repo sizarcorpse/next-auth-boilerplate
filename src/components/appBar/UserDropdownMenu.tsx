@@ -18,6 +18,7 @@ import {
   User,
   UserCog,
 } from "lucide-react";
+import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -78,7 +79,15 @@ const SingOutBox = () => {
   );
 };
 
-const NavigationMenu = ({ items }: any) => {
+const NavigationMenu = ({
+  items,
+}: {
+  items: {
+    label: string;
+    icon: any;
+    href: string;
+  }[];
+}) => {
   return (
     <>
       {items.map((item: any, index: any) => {
@@ -96,7 +105,7 @@ const NavigationMenu = ({ items }: any) => {
   );
 };
 
-const ProfileMiniCard = ({ user }: any) => {
+const ProfileMiniCard = ({ user }: { user: Session["user"] }) => {
   const { name, image, email } = user || {};
   return (
     <div className="w-full flex flex-row items-center justify-between gap-3">
@@ -119,32 +128,30 @@ const ProfileMiniCard = ({ user }: any) => {
   );
 };
 
-const UserDropdownMenu = ({ user }: any) => {
+const UserDropdownMenu = ({ user }: { user: Session["user"] }) => {
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="cursor-pointer">
-          <Image
-            src={user?.image || "/assets/images/default-avatar.jpeg"}
-            alt="avatar"
-            width={36}
-            height={36}
-            className="rounded-full"
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-64" align="end">
-          <DropdownMenuItem className="h-auto bg-primary pointer-events-none">
-            <ProfileMiniCard user={user} />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <NavigationMenu items={MENU_PRIMARY} />
-          <DropdownMenuSeparator />
-          <NavigationMenu items={MENU_SECONDARY} />
-          <DropdownMenuSeparator />
-          <SingOutBox />
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild className="cursor-pointer">
+        <Image
+          src={user?.image || "/assets/images/default-avatar.jpeg"}
+          alt="avatar"
+          width={36}
+          height={36}
+          className="rounded-full"
+        />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-64" align="end">
+        <DropdownMenuItem className="h-auto bg-primary pointer-events-none">
+          <ProfileMiniCard user={user} />
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <NavigationMenu items={MENU_PRIMARY} />
+        <DropdownMenuSeparator />
+        <NavigationMenu items={MENU_SECONDARY} />
+        <DropdownMenuSeparator />
+        <SingOutBox />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
