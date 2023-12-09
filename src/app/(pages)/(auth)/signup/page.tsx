@@ -1,5 +1,4 @@
-import LoginWithGithub from "@/components/auth/buttons/LoginWithGithub";
-import { SignUpForm } from "@/components/user";
+import { LoginWithGithub, SignUpForm } from "@/components/user";
 import {
   Coffee,
   Github,
@@ -47,7 +46,7 @@ const DeveloperSocialLinks = () => {
             className="group p-2 backdrop-blur-xl rounded-full"
           >
             <Icon
-              className="w-4 h-4 text-primary group-hover:text-warning group-hover:scale-105 transition-all duration-300"
+              className="w-4 h-4 text-neutral-50 group-hover:text-warning group-hover:scale-105 transition-all duration-300"
               strokeWidth={1.5}
             />
           </Link>
@@ -74,7 +73,7 @@ const SignUpPage = () => {
               </Link>
             </span>
             Explore Imagination
-            <span className="text-primary-foreground text-base font-normal">
+            <span className="text-primary-foreground text-base font-light">
               Create an account to start exploring
             </span>
           </h2>
@@ -88,10 +87,10 @@ const SignUpPage = () => {
               Create new account 🦖
             </h3>
             <SignUpForm />
-            <div className="text-primary-foreground text-base font-normal">
+            <div className="text-primary-foreground text-base font-light">
               Already have an account?
-              <Link href="/login">
-                <span className="text-warning hover:underline"> Login</span>
+              <Link href="/signin">
+                <span className="text-warning hover:underline"> Sign In</span>
               </Link>
             </div>
           </div>

@@ -75,6 +75,10 @@ const SignUpForm = () => {
     resolver: zodResolver(userSchema),
     defaultValues: {
       name: "",
+      username: "",
+      email: "",
+      password: "",
+      passwordConfirmation: "",
     },
   });
 
@@ -119,7 +123,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div>
+    <div className="w-full">
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -132,7 +136,7 @@ const SignUpForm = () => {
                     {...field}
                     icon="Type"
                     placeholder="Name"
-                    className={`h-12 bg-primary/90 border-primary/80 text-primary-foreground ${
+                    className={`h-12 bg-primary-foreground/5 border-primary/80 text-primary-foreground ${
                       errors.name
                         ? "border-destructive focus-visible:ring-destructive"
                         : "border-transparent"
@@ -154,7 +158,7 @@ const SignUpForm = () => {
                     {...field}
                     icon="User"
                     placeholder="Username"
-                    className={`h-12 bg-primary/90 border-primary/80 text-primary-foreground ${
+                    className={`h-12 bg-primary-foreground/5 border-primary/80 text-primary-foreground ${
                       errors.username
                         ? "border-destructive focus-visible:ring-destructive"
                         : "border-transparent"
@@ -175,7 +179,7 @@ const SignUpForm = () => {
                     {...field}
                     icon="Mail"
                     placeholder="Email"
-                    className={`h-12 bg-primary/90 border-primary/80 text-primary-foreground ${
+                    className={`h-12 bg-primary-foreground/5 border-primary/80 text-primary-foreground ${
                       errors.email
                         ? "border-destructive focus-visible:ring-destructive"
                         : "border-transparent"
@@ -197,7 +201,7 @@ const SignUpForm = () => {
                     icon="KeyRound"
                     placeholder="Password"
                     type="password"
-                    className={`h-12 bg-primary/90 border-primary/80 text-primary-foreground ${
+                    className={`h-12 bg-primary-foreground/5 border-primary/80 text-primary-foreground ${
                       errors.password
                         ? "border-destructive focus-visible:ring-destructive"
                         : "border-transparent"
@@ -219,7 +223,7 @@ const SignUpForm = () => {
                     icon="KeyRound"
                     placeholder="Confirm password"
                     type="password"
-                    className={`h-12 bg-primary/90 border-primary/80 text-primary-foreground ${
+                    className={`h-12 bg-primary-foreground/5 border-primary/80 text-primary-foreground ${
                       errors.passwordConfirmation
                         ? "border-destructive focus-visible:ring-destructive"
                         : "border-transparent"
