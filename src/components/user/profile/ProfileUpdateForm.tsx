@@ -1,7 +1,9 @@
 "use client";
 
+import { updateUserProfile } from "@/actions";
 import {
   DateFormField,
+  FormGroup,
   SelectFormField,
   SocialFormField,
   TextFormField,
@@ -9,54 +11,20 @@ import {
 } from "@/components/elements";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useUserProfileSwr } from "@/hooks/user";
+// import { useUserProfileSwr } from "@/hooks/user";
+import {
+  ProfileValidator,
+  genderOptions,
+  pronounsOptions,
+} from "@/validators/profile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Gender, Profile, Pronouns } from "@prisma/client";
-import { get } from "http";
 import _ from "lodash";
-import {
-  Building2,
-  Fingerprint,
-  Info,
-  LucideIcon,
-  Share2,
-  User,
-} from "lucide-react";
-import { revalidatePath, revalidateTag } from "next/cache";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as z from "zod";
-
-const genderOptions = ["MALE", "FEMALE", "OTHER", "NOT_SELECTED"] as const;
-const pronounsOptions = [
-  "HE_HIM",
-  "SHE_HER",
-  "THEY_THEM",
-  "DONT_SPECIFY",
-  "OTHER",
-] as const;
-
-const profileSchema = z.object({
-  designation: z.string().min(3).max(50).optional(),
-  company: z.string().min(3).max(50).optional(),
-  website: z.string().url().optional(),
-  location: z.string().min(3).max(50).optional(),
-  publicEmail: z.string().email().optional(),
-  publicPhone: z.string().min(3).max(50).optional(),
-  gender: z.enum(genderOptions).optional(),
-  pronouns: z.enum(pronounsOptions).optional(),
-  headline: z.string().min(1).max(200).optional(),
-  biography: z.object({}).optional(),
-  dateOfBirth: z.date().optional(),
-  linkedin: z.string().url().optional().optional(),
-  github: z.string().url().optional(),
-  twitter: z.string().url().optional(),
-  facebook: z.string().url().optional(),
-  instagram: z.string().url().optional(),
-  discord: z.string().url().optional(),
-});
 
 const transformGenderOptions = genderOptions.map((option) => ({
   label:
@@ -72,63 +40,31 @@ const transformPronounsOptions = pronounsOptions.map((option) => ({
   value: option,
 }));
 
-const FormGroup = ({
-  children,
-  icon,
-  title,
-  subtitle,
-  column = 1,
-}: {
-  children: React.ReactNode;
-  title: string;
-  icon?: LucideIcon;
-  subtitle?: string;
-  className?: string;
-  column?: number;
-}) => {
-  const Icon = icon || Info;
-  return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <div className="flex flex-row items-center justify-start gap-2">
-          <Icon className="w-5 h-5" />
-          <span className="text-sm font-semibold">{title}</span>
-        </div>
-        {subtitle && <span className="text-xs font-light">{subtitle}</span>}
-      </div>
-      <div
-        className={`grid gap-4 ${
-          column === 2 ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"
-        } `}
-      >
-        {children}
-      </div>
-    </div>
-  );
-};
-
-function getDefaultValue(value: any) {
+// get value or undefined
+function dv(value: any) {
   return value || undefined;
 }
 
 const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const { profile: cv, mutateProfile } = useUserProfileSwr({
-    initProfileData: profileData,
-  });
+  // if use api route:
+  // const { profile: cv, mutateProfile } = useUserProfileSwr({
+  //   initProfileData: profileData,
+  // });
 
-  const profile = _.merge({}, profileData.data, cv);
+  const profile = _.merge({}, profileData);
 
-  const form = useForm<z.infer<typeof profileSchema>>({
-    resolver: zodResolver(profileSchema),
+  const form = useForm<z.infer<typeof ProfileValidator>>({
+    resolver: zodResolver(ProfileValidator),
     defaultValues: {
-      designation: getDefaultValue(profile?.designation),
-      company: getDefaultValue(profile?.company),
-      website: getDefaultValue(profile?.website),
-      location: getDefaultValue(profile?.location),
-      publicEmail: getDefaultValue(profile?.publicEmail),
-      publicPhone: getDefaultValue(profile?.publicPhone),
+      designation: dv(profile?.designation),
+      company: dv(profile?.company),
+      website: dv(profile?.website),
+      location: dv(profile?.location),
+      publicEmail: dv(profile?.publicEmail),
+      publicPhone: dv(profile?.publicPhone),
       gender:
         profile?.gender === "NOT_SELECTED"
           ? undefined
@@ -137,41 +73,65 @@ const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
         profile?.pronouns === "DONT_SPECIFY"
           ? undefined
           : (profile?.pronouns as keyof typeof Pronouns),
-      headline: getDefaultValue(profile?.headline),
-      biography: getDefaultValue(profile?.biography),
-      dateOfBirth: getDefaultValue(profile?.dateOfBirth),
-      linkedin: getDefaultValue(profile?.linkedin),
-      github: getDefaultValue(profile?.github),
-      twitter: getDefaultValue(profile?.twitter),
-      facebook: getDefaultValue(profile?.facebook),
-      instagram: getDefaultValue(profile?.instagram),
-      discord: getDefaultValue(profile?.discord),
+      headline: dv(profile?.headline),
+      biography: dv(profile?.biography),
+      dateOfBirth: dv(profile?.dateOfBirth),
+      linkedin: dv(profile?.linkedin),
+      github: dv(profile?.github),
+      twitter: dv(profile?.twitter),
+      facebook: dv(profile?.facebook),
+      instagram: dv(profile?.instagram),
+      discord: dv(profile?.discord),
     },
     mode: "onBlur",
   });
 
   const {
     handleSubmit,
-    reset,
     formState: { errors, isValid },
   } = form;
 
-  const handleUpdateProfile = async (values: z.infer<typeof profileSchema>) => {
+  const handleUpdateProfile = async (
+    values: z.infer<typeof ProfileValidator>
+  ) => {
     setIsLoading(true);
-
     try {
-      const res = await fetch("/api/user/profile", {
-        method: "PATCH",
-        body: JSON.stringify(values),
-      });
-      const json = await res.json();
+      // if use api route:
+      // const res = await fetch("/api/user/profile", {
+      //   method: "PATCH",
+      //   body: JSON.stringify(values),
+      // });
+      // const json = await res.json();
 
-      if (!res.ok) {
-        throw new Error(json.message);
-      }
-      toast.success(json.message);
+      // if (!res.ok) {
+      //   throw new Error(json.message);
+      // }
+      // toast.success(json.message);
+      // mutateProfile(json, false);
+
+      startTransition(async () => {
+        await updateUserProfile({
+          designation: values.designation,
+          company: values.company,
+          website: values.website,
+          location: values.location,
+          publicEmail: values.publicEmail,
+          publicPhone: values.publicPhone,
+          gender: values.gender,
+          pronouns: values.pronouns,
+          headline: values.headline,
+          biography: values.biography,
+          dateOfBirth: values.dateOfBirth,
+          linkedin: values.linkedin,
+          github: values.github,
+          twitter: values.twitter,
+          facebook: values.facebook,
+          instagram: values.instagram,
+          discord: values.discord,
+        });
+      });
+      toast.success("Profile updated successfully");
       setIsLoading(false);
-      mutateProfile(json, false);
     } catch (error: any) {
       toast.error(error.message);
       setIsLoading(false);
@@ -183,13 +143,13 @@ const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
       <Form {...form}>
         <form
           onSubmit={handleSubmit(handleUpdateProfile)}
-          className="space-y-12"
+          className="space-y-10"
         >
           {/* COMPANY */}
           <FormGroup
             title="Company Information"
             subtitle="Your company information will be visible to other users on your profile."
-            icon={Building2}
+            icon="Building2"
             column={2}
           >
             <TextFormField
@@ -204,13 +164,19 @@ const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
               placeholder="Company"
               error={errors.company}
             />
+            <TextFormField
+              form={form}
+              name="website"
+              placeholder="Website"
+              error={errors.website}
+            />
           </FormGroup>
 
           {/* CONTACT INFORMATION */}
           <FormGroup
             title="Contact Information"
             subtitle="Your contact information will be visible to other users on your profile."
-            icon={Fingerprint}
+            icon="Fingerprint"
             column={2}
           >
             <TextFormField
@@ -231,19 +197,13 @@ const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
               placeholder="Phone"
               error={errors.publicPhone}
             />
-            <TextFormField
-              form={form}
-              name="website"
-              placeholder="Website"
-              error={errors.website}
-            />
           </FormGroup>
 
           {/* PERSONAL INFORMATION */}
           <FormGroup
             title="Personal Information"
             subtitle="Your personal information will be visible to other users on your profile."
-            icon={User}
+            icon="User"
             column={2}
           >
             <DateFormField
@@ -266,7 +226,15 @@ const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
               error={errors.pronouns}
               options={transformPronounsOptions}
             />
+          </FormGroup>
 
+          {/* BIOGRAPHY */}
+          <FormGroup
+            title="Biography"
+            subtitle="Your biography will be visible to other users on your profile."
+            icon="FileText"
+            column={1}
+          >
             <TextareaFormField
               form={form}
               name="headline"
@@ -279,7 +247,7 @@ const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
           <FormGroup
             title="Social Link"
             subtitle="Your social link will be visible to other users on your profile."
-            icon={Share2}
+            icon="Share2"
             column={2}
           >
             <SocialFormField
@@ -326,27 +294,42 @@ const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
               icon="Instagram"
               iconClassName="text-muted-foreground"
             />
+            <SocialFormField
+              form={form}
+              name="discord"
+              placeholder="Discord"
+              error={errors.instagram}
+              icon="Discord"
+              iconClassName="text-muted-foreground"
+            />
           </FormGroup>
 
           {/* SUBMIT */}
-          <div>
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-12 border-none"
+              disabled={isLoading || !isValid || isPending}
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
               variant="success"
-              className="h-12 w-full"
-              disabled={isLoading || !isValid}
+              className="h-12"
+              disabled={isLoading || !isValid || isPending}
             >
               Update Profile
+              {isPending && (
+                <span className="inline-flex ml-2">
+                  <Loader2 className="w-4 h-4" />
+                </span>
+              )}
             </Button>
           </div>
         </form>
       </Form>
-      <pre>
-        profileData:<code>{JSON.stringify(profileData.data, null, 2)}</code>
-      </pre>
-      <pre>
-        profile:<code>{JSON.stringify(profile, null, 2)}</code>
-      </pre>
     </div>
   );
 };
