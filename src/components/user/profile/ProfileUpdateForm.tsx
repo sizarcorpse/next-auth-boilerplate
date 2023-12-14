@@ -44,8 +44,7 @@ const transformPronounsOptions = pronounsOptions.map((option) => ({
 function dv(value: any) {
   return value || undefined;
 }
-
-const ProfileUpdateForm = ({ profileData }: { profileData: any }) => {
+const ProfileUpdateForm = ({ profileData }: { profileData?: any }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
 
