@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { InputWithIcon } from "@/components/ui/input-with-icon";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -47,6 +47,7 @@ const userSchema = z.object({
 
 const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -71,13 +72,13 @@ const SignInForm = () => {
         redirect: false,
         email: values.email,
         password: values.password,
-        callbackUrl,
       });
 
-      setIsLoading(false);
       if (!res?.error) {
         toast.success("Logged in");
         router.refresh();
+        await getSession();
+        setIsLoading(false);
         router.push(callbackUrl);
       } else {
         throw new Error(res.error);
