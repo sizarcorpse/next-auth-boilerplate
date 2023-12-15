@@ -2,8 +2,9 @@ import { authOptions } from "@/libs/auth";
 import { prisma } from "@/libs/prisma";
 import { ProfileValidator } from "@/validators/profile";
 import { getServerSession } from "next-auth/next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
 export async function GET() {
   try {
     console.log("✅ GET: /api/user/profile");
@@ -11,6 +12,16 @@ export async function GET() {
     const session = await getServerSession(authOptions);
 
     if (!session) {
+      return new NextResponse(
+        JSON.stringify({
+          status: "error",
+          data: "Unauthorized",
+        }),
+        { status: 401 }
+      );
+    }
+
+    if (!session?.user?.permissions?.includes("read:profile")) {
       return new NextResponse(
         JSON.stringify({
           status: "error",
@@ -54,16 +65,27 @@ export async function GET() {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
     console.log("✅ PATCH: /api/user/profile");
 
     const session = await getServerSession(authOptions);
+
     if (!session) {
       return new NextResponse(
         JSON.stringify({
           status: "error",
           message: "Unauthorized",
+        }),
+        { status: 401 }
+      );
+    }
+
+    if (!session?.user?.permissions?.includes("write:profile")) {
+      return new NextResponse(
+        JSON.stringify({
+          status: "error",
+          data: "Unauthorized",
         }),
         { status: 401 }
       );
@@ -77,7 +99,23 @@ export async function PATCH(request: Request) {
         userId: session?.user?.id,
       },
       data: {
-        ...result,
+        designation: result.designation,
+        company: result.company,
+        website: result.website,
+        location: result.location,
+        publicEmail: result.publicEmail,
+        publicPhone: result.publicPhone,
+        dateOfBirth: result.dateOfBirth,
+        gender: result.gender,
+        pronouns: result.pronouns,
+        headline: result.headline,
+        biography: result.biography,
+        linkedin: result.linkedin,
+        github: result.github,
+        twitter: result.twitter,
+        facebook: result.facebook,
+        instagram: result.instagram,
+        discord: result.discord,
       },
     });
 
