@@ -1,16 +1,26 @@
 import { authOptions } from "@/libs/auth";
 import { prisma } from "@/libs/prisma";
 import { compare, hash } from "bcryptjs";
+import { Session } from "next-auth";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
-
 export async function GET() {
   try {
     console.log("✅ GET: /api/user");
 
-    const session = await getServerSession(authOptions);
+    const session = (await getServerSession(authOptions)) as Session;
 
     if (!session) {
+      return new NextResponse(
+        JSON.stringify({
+          status: "error",
+          message: "Unauthorized",
+        }),
+        { status: 401 }
+      );
+    }
+
+    if (!session?.user?.permissions?.includes("read:user")) {
       return new NextResponse(
         JSON.stringify({
           status: "error",
