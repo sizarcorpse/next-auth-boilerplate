@@ -109,7 +109,6 @@ const SignInPage = () => {
             />
             <DeveloperSocialLinks />
           </div>
-          di
         </div>
       </div>
     </main>
