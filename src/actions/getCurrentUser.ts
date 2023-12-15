@@ -1,16 +1,11 @@
-import { authOptions } from "@/libs/auth";
+import { getUserServerSession } from "@/actions";
 import { prisma } from "@/libs/prisma";
-import { getServerSession } from "next-auth/next";
-
-export async function getSession() {
-  return await getServerSession(authOptions);
-}
 
 export default async function getCurrentUser() {
   try {
-    const session = await getSession();
+    const session = await getUserServerSession();
 
-    if (!session?.user?.email) {
+    if (!session) {
       return null;
     }
 
