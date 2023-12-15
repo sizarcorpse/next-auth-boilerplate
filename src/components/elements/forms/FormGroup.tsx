@@ -1,3 +1,4 @@
+import { cn } from "@/libs/utils";
 import {
   Building2,
   Fingerprint,
@@ -20,6 +21,7 @@ const FormGroup = ({
   title,
   subtitle,
   column = 1,
+  className,
 }: {
   children: React.ReactNode;
   title: string;
@@ -30,7 +32,7 @@ const FormGroup = ({
 }) => {
   const Icon = icons[icon as keyof typeof icons] || (Info as LucideIcon);
   return (
-    <div className="flex flex-col gap-4">
+    <div className={cn(`flex flex-col gap-4`, className)}>
       <div>
         <div className="flex flex-row items-center justify-start gap-2">
           <Icon className="w-4 h-4" />

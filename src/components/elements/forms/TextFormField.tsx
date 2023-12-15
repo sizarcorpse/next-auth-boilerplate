@@ -15,6 +15,7 @@ interface TextFormFieldProps {
   placeholder: string;
   error: FieldError | undefined;
   className?: string;
+  type?: string;
 }
 
 const TextFormField: React.FC<TextFormFieldProps> = ({
@@ -23,6 +24,7 @@ const TextFormField: React.FC<TextFormFieldProps> = ({
   placeholder,
   error,
   className,
+  type = "text",
 }) => (
   <FormField
     control={form.control}
@@ -33,6 +35,7 @@ const TextFormField: React.FC<TextFormFieldProps> = ({
           <Input
             {...field}
             placeholder={placeholder}
+            type={type}
             className={cn(
               `h-12 bg-primary/5 border-primary/80 text-primary ${
                 error
