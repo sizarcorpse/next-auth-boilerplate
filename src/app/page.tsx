@@ -14,17 +14,12 @@ const about = {
   ],
 };
 
-import Link from "next/link";
-
 const Home = async () => {
   const { packages } = about;
 
   return (
     <main className="flex items-center justify-center p-6">
       <div className="container max-w-screen-lg mx-auto">
-        <Link href="/u">User</Link>
-        <Link href="/u/settings">Settings</Link>
-
         <div className="flex flex-col gap-4 items-center justify-center">
           <h1 className="text-xl font-bold text-primary uppercase md:text-4xl lg:text-6xl text-center">
             Next Auth Boilerplate
