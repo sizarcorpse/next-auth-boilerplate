@@ -1,5 +1,5 @@
-const page = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
+const ProfilePage = () => {
+  return <></>;
 };
 
-export default page;
+export default ProfilePage;
