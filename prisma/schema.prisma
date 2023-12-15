@@ -68,7 +68,7 @@ model Profile {
   pronouns    Pronouns? @default(DONT_SPECIFY)
   headline    String?   @default("")
   biography   Json?     @default("{}") @db.Json
-  dateOfBirth DateTime? @default(now())
+  dateOfBirth DateTime? @default(now()) @db.Date
   linkedin    String?   @default("")
   github      String?   @default("")
   twitter     String?   @default("")
