@@ -11,7 +11,7 @@ import {
 import { InputWithIcon } from "@/components/ui/input-with-icon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getSession, signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -49,8 +49,6 @@ const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
@@ -79,7 +77,7 @@ const SignInForm = () => {
         await getSession();
         router.refresh();
         setIsLoading(false);
-        router.push(callbackUrl);
+        router.push("/");
       } else {
         throw new Error(res.error);
       }
