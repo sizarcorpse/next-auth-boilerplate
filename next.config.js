@@ -8,13 +8,13 @@ let nextConfig;
 
 nextConfig = {
   env: {
-    DATABASE_URL: process.env.DATABASE_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     GITHUB_ID: process.env.GITHUB_ID,
     GITHUB_SECRET: process.env.GITHUB_SECRET,
     NEXT_API_URL: process.env.NEXT_API_URL,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    DIRECT_URL: process.env.DIRECT_URL,
+    POSTGRES_PRISMA_URL: process.env.DATABASE_URL,
+    POSTGRES_URL_NON_POOLING: process.env.DIRECT_URL,
   },
   images: {
     remotePatterns: [
