@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
+
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig = {
   env: {
     GITHUB_ID: process.env.GITHUB_ID,
@@ -11,4 +16,4 @@ const nextConfig = {
   transpilePackages: ["lucide-react"],
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);
