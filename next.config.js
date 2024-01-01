@@ -14,6 +14,7 @@ nextConfig = {
     GITHUB_SECRET: process.env.GITHUB_SECRET,
     NEXT_API_URL: process.env.NEXT_API_URL,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    DIRECT_URL: process.env.DIRECT_URL,
   },
   images: {
     remotePatterns: [
