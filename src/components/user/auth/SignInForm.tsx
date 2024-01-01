@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,7 +16,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as z from "zod";
-
 const userSchema = z.object({
   email: z
     .string()
@@ -76,8 +76,8 @@ const SignInForm = () => {
 
       if (!res?.error) {
         toast.success("Logged in");
-        router.refresh();
         await getSession();
+        router.refresh();
         setIsLoading(false);
         router.push(callbackUrl);
       } else {
