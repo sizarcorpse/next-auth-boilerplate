@@ -26,29 +26,29 @@ const ProfileCard: FC<ProfileCardProps> = ({ profile, user }) => {
     <div className="space-y-6 md:space-y-12">
       <div className="space-y-4">
         <ProfileCardInfo
-          name={user.name}
-          username={user.username}
-          email={user.email}
-          image={user.image}
-          gender={profile.gender}
-          role={user.Role.name}
+          name={user?.name}
+          username={user?.username}
+          email={user?.email}
+          image={user?.image}
+          gender={profile?.gender}
+          role={user?.Role?.name}
         />
-        <ProfileHeader headline={profile.headline} />
+        <ProfileHeader headline={profile?.headline} />
         <ProfileCardContact
-          designation={profile.designation}
-          company={profile.company}
-          location={profile.location}
-          website={profile.website}
-          publicEmail={profile.publicEmail}
-          publicPhone={profile.publicPhone}
+          designation={profile?.designation}
+          company={profile?.company}
+          location={profile?.location}
+          website={profile?.website}
+          publicEmail={profile?.publicEmail}
+          publicPhone={profile?.publicPhone}
         />
         <ProfileCardSocial
-          twitter={profile.twitter}
-          facebook={profile.facebook}
-          linkedin={profile.linkedin}
-          github={profile.github}
-          instagram={profile.instagram}
-          discord={profile.discord}
+          twitter={profile?.twitter}
+          facebook={profile?.facebook}
+          linkedin={profile?.linkedin}
+          github={profile?.github}
+          instagram={profile?.instagram}
+          discord={profile?.discord}
         />
       </div>
       <div>
