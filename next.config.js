@@ -13,8 +13,8 @@ nextConfig = {
     GITHUB_SECRET: process.env.GITHUB_SECRET,
     NEXT_API_URL: process.env.NEXT_API_URL,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    POSTGRES_PRISMA_URL: process.env.DATABASE_URL,
-    POSTGRES_URL_NON_POOLING: process.env.DIRECT_URL,
+    POSTGRES_PRISMA_URL: process.env.POSTGRES_PRISMA_URL,
+    POSTGRES_URL_NON_POOLING: process.env.POSTGRES_URL_NON_POOLING,
   },
   images: {
     remotePatterns: [
