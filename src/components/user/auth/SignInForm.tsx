@@ -1,5 +1,6 @@
 "use client";
 
+import { navigate } from "@/actions/navigate";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,8 +11,8 @@ import {
 } from "@/components/ui/form";
 import { InputWithIcon } from "@/components/ui/input-with-icon";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getSession, signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+// import {  useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -48,7 +49,7 @@ const userSchema = z.object({
 const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const form = useForm<z.infer<typeof userSchema>>({
     resolver: zodResolver(userSchema),
@@ -73,11 +74,11 @@ const SignInForm = () => {
       });
 
       if (!res?.error) {
-        toast.success("Logged in");
-        await getSession();
-        router.refresh();
         setIsLoading(false);
-        router.push("/");
+        toast.success("Logged in");
+        // await getSession();
+        // router.refresh();
+        navigate("/");
       } else {
         throw new Error(res.error);
       }

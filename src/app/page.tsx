@@ -24,6 +24,7 @@ const Home = async () => {
           <h1 className="text-xl font-bold text-primary uppercase md:text-4xl lg:text-6xl text-center">
             Next Auth Boilerplate
           </h1>
+
           <div className="flex flex-row items-center justify-center flex-wrap gap-2">
             {packages.map((item, index) => (
               <p
