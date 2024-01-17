@@ -13,50 +13,26 @@ import { InputWithIcon } from "@/components/ui/input-with-icon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 // import {  useRouter } from "next/navigation";
+import {
+  userSigninValidation,
+  type UserSigninValidationRequest,
+} from "@/validators/user";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import * as z from "zod";
-const userSchema = z.object({
-  email: z
-    .string()
-    .email()
-    .refine(
-      (email) => {
-        const domain = email.split("@")[1];
-        return [
-          "gmail.com",
-          "outlook.com",
-          "hotmail.com",
-          "yahoo.com",
-        ].includes(domain);
-      },
-      {
-        message:
-          "Email domain must be either gmail.com, outlook.com, hotmail.com, or yahoo.com",
-      }
-    ),
-  password: z
-    .string()
-    .min(8)
-    .max(50)
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%^*#?&]{8,50}$/, {
-      message:
-        "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
-    }),
-});
 
 const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // const router = useRouter();
 
-  const form = useForm<z.infer<typeof userSchema>>({
-    resolver: zodResolver(userSchema),
+  const form = useForm<UserSigninValidationRequest>({
+    resolver: zodResolver(userSigninValidation),
     defaultValues: {
       email: "",
       password: "",
     },
+    mode: "onBlur",
   });
   const {
     handleSubmit,
@@ -64,7 +40,7 @@ const SignInForm = () => {
     formState: { errors, isValid },
   } = form;
 
-  const onSubmit = async (values: z.infer<typeof userSchema>) => {
+  const onSubmit = async (values: UserSigninValidationRequest) => {
     setIsLoading(true);
     try {
       const res = await signIn("credentials", {
