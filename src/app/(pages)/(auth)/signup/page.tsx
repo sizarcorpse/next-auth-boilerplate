@@ -60,39 +60,33 @@ const SignUpPage = () => {
   return (
     <main className="w-full flex items-center justify-center p-2 min-h-[calc(100vh-60px)] sm:px-6">
       <div className="container p-0 max-w-screen-lg bg-primary rounded-2xl min-h-[767px] h-auto grid grid-cols-2">
-        <div className="col-span-2 order-2 p-6 sm:py-8 sm:px-20 grid grid-cols-1 gap-4 md:gap-2 md:col-span-1 md:order-1 md:px-4 lg:px-12">
-          <h2 className="flex flex-col gap-1 text-primary-foreground text-4xl font-bold md:gap-2 md:text-4xl">
-            <span className="flex items-center gap-2">
-              <Coffee className="w-8 h-8 text-warning" />
-              <Link
-                href="https://www.sizar.io"
-                target="_blank"
-                className="text-base text-muted font-medium hover:underline"
-              >
-                sizar.io
-              </Link>
-            </span>
-            Explore Imagination
-            <span className="text-primary-foreground text-base font-light">
-              Create an account to start exploring
-            </span>
-          </h2>
-
-          <div className="flex flex-col gap-2">
-            <LoginWithGithub />
+        <div className="col-span-2 order-2 p-6 w-full flex flex-row content-center items-center justify-center gap-6 flex-wrap sm:py-8 sm:px-20 md:gap-10 md:col-span-1 md:order-1 md:px-4 lg:px-12">
+          <div className="flex items-center gap-2 grow">
+            <Coffee className="w-8 h-8 text-warning" strokeWidth={1.5} />
+            <Link
+              href="https://www.sizar.io"
+              target="_blank"
+              className="text-base text-muted hover:underline"
+            >
+              sizar.io
+            </Link>
           </div>
-
-          <div className="flex flex-col gap-4">
-            <h3 className="text-xl font-semibold text-primary-foreground">
-              Create new account 🦖
-            </h3>
+          <div className="basis-full flex flex-col gap-4">
             <SignUpForm />
-            <div className="text-primary-foreground text-base font-light">
+            <div className="text-primary-foreground text-sm font-light">
               Already have an account?
               <Link href="/signin">
                 <span className="text-warning hover:underline"> Sign In</span>
               </Link>
             </div>
+            <div className="flex items-center justify-center my-2">
+              <hr className="w-full border-border/10" />
+              <span className="text-sm font-light px-2 text-primary-foreground">
+                or
+              </span>
+              <hr className="w-full border-border/10" />
+            </div>
+            <LoginWithGithub />
           </div>
         </div>
 
