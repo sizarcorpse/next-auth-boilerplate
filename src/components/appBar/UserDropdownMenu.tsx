@@ -28,16 +28,19 @@ const MENU_PRIMARY = [
     label: "Profile",
     icon: User,
     href: "/u/profile",
+    disabled: false,
   },
   {
     label: "Account Settings",
     icon: UserCog,
-    href: "/u/account-settings",
+    href: "/u/profile/settings",
+    disabled: false,
   },
   {
     label: "Dashboard",
     icon: LayoutDashboard,
     href: "/dashboard",
+    disabled: true,
   },
 ];
 
@@ -46,21 +49,25 @@ const MENU_SECONDARY = [
     label: "Help",
     icon: Lightbulb,
     href: "/help",
+    disabled: true,
   },
   {
     label: "Language",
     icon: Globe2,
     href: "/language",
+    disabled: true,
   },
   {
     label: "Settings",
     icon: Settings,
     href: "/settings",
+    disabled: true,
   },
   {
     label: "Privacy Policy",
     icon: ShieldCheck,
     href: "/privacy",
+    disabled: true,
   },
 ];
 
@@ -93,7 +100,11 @@ const NavigationMenu = ({
       {items.map((item: any, index: any) => {
         const Icon = item.icon;
         return (
-          <DropdownMenuItem key={index} className="group hover:bg-muted">
+          <DropdownMenuItem
+            key={index}
+            className="group hover:bg-muted"
+            disabled={item.disabled}
+          >
             <Link href={item.href} className="flex items-center gap-3 w-full">
               <Icon className="w-5 h-5" strokeWidth={1.5} />
               <span className="text-sm">{item.label}</span>
